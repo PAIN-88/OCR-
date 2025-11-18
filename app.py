@@ -15,6 +15,9 @@ pattern = r"(\b(?:\d{1,2}[-/.]\d{1,2}|\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Ma
 @app.route("/")
 def home():
     return render_template('frontend.html')
+@app.route("/health")
+def health():
+    return jsonify({"status": "ok", "message": "Backend is running"})
 
 @app.route("/upload-bank", methods=["POST"])
 def upload_bank():
@@ -86,6 +89,7 @@ if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
 
 
 
