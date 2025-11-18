@@ -59,13 +59,14 @@ bankClearBtn.addEventListener('click', () => {
     bankSuccess.classList.remove('show');
 });
 
-// SUBMIT BANK FILE
+// SUBMIT BANK FILE - FIXED FOR PRODUCTION
 bankSubmitBtn.addEventListener('click', () => {
     if (bankFile) {
         const formData = new FormData();
         formData.append('bankStatement', bankFile);
 
-        fetch('http://127.0.0.1:5000/upload-bank', {
+        // ✅ CHANGED: Use relative URL instead of localhost
+        fetch('/upload-bank', {
             method: 'POST',
             body: formData
         })
@@ -141,13 +142,14 @@ panClearBtn.addEventListener('click', () => {
     panSuccess.classList.remove('show');
 });
 
-// SUBMIT PAN FILE
+// SUBMIT PAN FILE - FIXED FOR PRODUCTION
 panSubmitBtn.addEventListener('click', () => {
     if (panFile) {
         const formData = new FormData();
         formData.append('panCard', panFile);
 
-        fetch('http://127.0.0.1:5000/upload-pan', {
+        // ✅ CHANGED: Use relative URL instead of localhost
+        fetch('/upload-pan', {
             method: 'POST',
             body: formData
         })
