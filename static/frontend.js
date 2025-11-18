@@ -66,7 +66,7 @@ bankSubmitBtn.addEventListener('click', () => {
         formData.append('bankStatement', bankFile);
 
         // ✅ CHANGED: Use relative URL instead of localhost
-        fetch('/upload-bank', {
+        fetch('https://ocr-4-n7wa.onrender.com/upload-bank', {
             method: 'POST',
             body: formData
         })
@@ -149,7 +149,7 @@ panSubmitBtn.addEventListener('click', () => {
         formData.append('panCard', panFile);
 
         // ✅ CHANGED: Use relative URL instead of localhost
-        fetch('/upload-pan', {
+        fetch('https://ocr-4-n7wa.onrender.com/upload-pan', {
             method: 'POST',
             body: formData
         })
@@ -201,3 +201,4 @@ function downloadJSON(jsonData, filename) {
 
     URL.revokeObjectURL(url);
 }
+
