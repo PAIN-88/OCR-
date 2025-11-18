@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/frontend.css">
+    <title>ExtractHub - Document Upload</title>
+
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo-section">
+                <div class="logo-icon">📄</div>
+                <h1 class="logo-text">ExtractHub</h1>
+            </div>
+            <p class="subtitle">Secure document upload and extraction platform</p>
+        </div>
+    </header>
+
+    <main>
+        <div class="tab-navigation">
+            <button class="tab-btn active-bank" id="bankTab">
+                📄 Bank Statement
+            </button>
+            <button class="tab-btn" id="panTab">
+                💳 PAN Card
+            </button>
+        </div>
+
+        <!-- Bank Statement Section -->
+        <div class="upload-section active" id="bankSection">
+            <div class="section-header">
+                <div class="section-icon bank">📄</div>
+                <div>
+                    <div class="section-title">Upload Bank Statement</div>
+                    <div class="section-subtitle">PDF format only</div>
+                </div>
+            </div>
+
+            <div class="upload-area" id="bankUploadArea">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text">Click to upload or drag and drop</div>
+                <div class="upload-subtext">PDF files only (Max 10MB)</div>
+            </div>
+            <input type="file" id="bankFileInput" accept=".pdf">
+
+            <div class="file-preview" id="bankFilePreview">
+                <div class="file-info">
+                    <div class="file-icon">📄</div>
+                    <div>
+                        <div class="file-name" id="bankFileName"></div>
+                        <div class="file-size" id="bankFileSize"></div>
+                    </div>
+                </div>
+                <button class="clear-btn" id="bankClearBtn">❌</button>
+            </div>
+
+            <div class="success-message" id="bankSuccess">
+                <span>✅</span>
+                <span class="success-text">Bank statement uploaded successfully!</span>
+            </div>
+
+            <button class="submit-btn bank-btn" id="bankSubmitBtn" disabled>
+                Submit Bank Statement
+            </button>
+            <button class="download-btn" id="downloadBankBtn" style="display:none; margin-top:10px;">
+                     ⬇️ Download Bank JSON
+            </button>
+
+        </div>
+
+        <!-- PAN Card Section -->
+        <div class="upload-section" id="panSection">
+            <div class="section-header">
+                <div class="section-icon pan">💳</div>
+                <div>
+                    <div class="section-title">Upload PAN Card</div>
+                    <div class="section-subtitle">PDF or Image formats</div>
+                </div>
+            </div>
+
+            <div class="upload-area pan-hover" id="panUploadArea">
+                <div class="upload-icon">📤</div>
+                <div class="upload-text">Click to upload or drag and drop</div>
+                <div class="upload-subtext">PDF, JPG, PNG files (Max 10MB)</div>
+            </div>
+            <input type="file" id="panFileInput" accept=".pdf,image/*">
+
+            <div class="file-preview" id="panFilePreview">
+                <div class="file-info">
+                    <div class="file-icon">💳</div>
+                    <div>
+                        <div class="file-name" id="panFileName"></div>
+                        <div class="file-size" id="panFileSize"></div>
+                    </div>
+                </div>
+                <button class="clear-btn" id="panClearBtn">❌</button>
+            </div>
+
+            <div class="success-message" id="panSuccess">
+                <span>✅</span>
+                <span class="success-text">PAN card uploaded successfully!</span>
+            </div>
+
+            <button class="submit-btn pan-btn" id="panSubmitBtn" disabled>
+                Submit PAN Card
+            </button>
+            <button class="download-btn" id="downloadPanBtn" style="display:none; margin-top:10px;">
+                   ⬇️ Download PAN JSON
+            </button>
+
+        </div>
+
+        <!-- Features -->
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon blue">✅</div>
+                <div class="feature-title">Secure Upload</div>
+                <div class="feature-text">End-to-end encrypted document transfer</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon purple">📄</div>
+                <div class="feature-title">Fast Processing</div>
+                <div class="feature-text">Quick extraction of document data</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon green">💳</div>
+                <div class="feature-title">Multiple Formats</div>
+                <div class="feature-text">Support for PDF and image files</div>
+            </div>
+        </div>
+    </main>
+
+    
+</body>
+<script src="/static/frontend.js"></script>
+</html>
