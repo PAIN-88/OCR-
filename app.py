@@ -52,35 +52,34 @@ def upload_bank():
     
     file = request.files["bankStatement"]
     output = {"transactions": []}
-    
+
     try:
-        # Ensure tesseract is found
-        if not pytesseract.pytesseract.tesseract_cmd:
-            tesseract_path = shutil.which('tesseract')
-            if tesseract_path:
-                pytesseract.pytesseract.tesseract_cmd = tesseract_path
-            else:
-                raise Exception("Tesseract not found in system PATH")
-        
         with pdfplumber.open(file) as pdf:
             for page in pdf.pages:
-                page_img = page.to_image(resolution=300)
-                pil_img = page_img.original
-                text = pytesseract.image_to_string(pil_img)
+
+                # Try direct text extraction (super fast)
+                text = page.extract_text()
+
+                # If text is None, fallback to OCR (slow)
+                if not text:
+                    img = page.to_image(resolution=150).original
+                    text = pytesseract.image_to_string(img)
+
                 clean = re.sub(r"\s+", " ", text)
                 matches = re.findall(pattern, clean)
-                
+
                 for date, desc, debit, credit, balance in matches:
-                    amount = debit if debit else credit
                     output["transactions"].append({
                         "date": date,
                         "description": desc.strip(),
                         "balance": balance
                     })
+
         return jsonify(output)
-    
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 # Regex patterns
 pan_pattern = r"\b([A-Z]{5}[0-9]{4}[A-Z])\b"
@@ -136,3 +135,4 @@ if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port, debug=False)
+
