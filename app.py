@@ -3,13 +3,16 @@ import pdfplumber
 from PIL import Image
 import pytesseract
 import re
+import shutil
 from flask_cors import CORS
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 
-# ✅ REMOVED: pytesseract path (Docker handles this automatically)
-# Tesseract will be in PATH when using Docker
+# Try to find tesseract in PATH
+tesseract_cmd = shutil.which('tesseract')
+if tesseract_cmd:
+    pytesseract.pytesseract.tesseract_cmd = tesseract_cmd
 
 pattern = r"(\b(?:\d{1,2}[-/.]\d{1,2}|\d{1,2}\s+(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|Jun(?:e)?|Jul(?:y)?|Aug(?:ust)?|Sep(?:t(?:ember)?)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?))\b)\s+(.+?)\s+(?:(\d{1,3}(?:,\d{3})*\.\d{2})\s+)?(?:(\d{1,3}(?:,\d{3})*\.\d{2})\s+)?(\d{1,3}(?:,\d{3})*\.\d{2})"
 
@@ -21,16 +24,44 @@ def home():
 def health():
     return jsonify({"status": "ok", "message": "Backend is running"})
 
+@app.route("/test-tesseract")
+def test_tesseract():
+    import subprocess
+    try:
+        result = subprocess.run(['tesseract', '--version'], 
+                              capture_output=True, text=True, timeout=5)
+        return jsonify({
+            "status": "success",
+            "tesseract_cmd": pytesseract.pytesseract.tesseract_cmd,
+            "version": result.stdout,
+            "which": shutil.which('tesseract')
+        })
+    except FileNotFoundError:
+        return jsonify({
+            "error": "Tesseract not found in PATH",
+            "tesseract_cmd": pytesseract.pytesseract.tesseract_cmd,
+            "which": shutil.which('tesseract')
+        })
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
 @app.route("/upload-bank", methods=["POST"])
 def upload_bank():
     if "bankStatement" not in request.files:
         return jsonify({"error": "No file uploaded"}), 400
     
     file = request.files["bankStatement"]
-    
     output = {"transactions": []}
     
     try:
+        # Ensure tesseract is found
+        if not pytesseract.pytesseract.tesseract_cmd:
+            tesseract_path = shutil.which('tesseract')
+            if tesseract_path:
+                pytesseract.pytesseract.tesseract_cmd = tesseract_path
+            else:
+                raise Exception("Tesseract not found in system PATH")
+        
         with pdfplumber.open(file) as pdf:
             for page in pdf.pages:
                 page_img = page.to_image(resolution=300)
@@ -44,7 +75,6 @@ def upload_bank():
                     output["transactions"].append({
                         "date": date,
                         "description": desc.strip(),
-                        # "amount": amount,
                         "balance": balance
                     })
         return jsonify(output)
@@ -66,10 +96,17 @@ def upload_pan():
     text = ""
     
     try:
+        # Ensure tesseract is found
+        if not pytesseract.pytesseract.tesseract_cmd:
+            tesseract_path = shutil.which('tesseract')
+            if tesseract_path:
+                pytesseract.pytesseract.tesseract_cmd = tesseract_path
+            else:
+                raise Exception("Tesseract not found in system PATH")
+        
         # Check if PDF
         if file.filename.lower().endswith('.pdf'):
             with pdfplumber.open(file) as pdf:
-                # Assuming PAN card is a single page PDF
                 page = pdf.pages[0]
                 page_image = page.to_image(resolution=300)
                 pil_img = page_image.original
@@ -97,5 +134,5 @@ def upload_pan():
 
 if __name__ == "__main__":
     import os
-    port = int(os.environ.get("PORT", 10000))  # ✅ Changed default to 10000 for Render
+    port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port, debug=False)
